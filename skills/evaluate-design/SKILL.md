@@ -8,7 +8,7 @@ description: >
   or to verify adapt-design results. Triggers: "evaluate the design", "compare
   architectures", "residual index", "Ri", "did it get better", "test set".
 license: EPL-2.0
-lambda: "λ(naive, adapted, test_stressors). check(inputs ∧ disjoint(split) ∧ provenance) ∧ use(criteria) → ∀s: survives?(naive, s) ∧ survives?(adapted, s) → N, R, S → check(counts) → Ri = (R − N) / S ∧ regressions"
+lambda: "λ(naive, adapted, test_stressors). check(inputs ∧ disjoint(split) ∧ provenance) ∧ use(criteria) → ∀s: survives?(naive, s) ∧ survives?(adapted, s) → N, R, S → check(counts) → Ri = (R − N) / S ∧ limits(−N/S, (S − N)/S) ∧ regressions"
 metadata:
   tags: "architecture, design, resilience, evaluation, stressors"
 ---
@@ -54,7 +54,7 @@ If the user gives a run record directory, read and write files there. Start each
    1. Apply it to the naive design. Follow the flows. Decide: survives or not. Write one reason.
    2. Apply it to the adapted design in the same way. Decide and write one reason.
    3. If neither design survives, decide which design survives better: less loss of essential function, or a faster return. Mark that design as the better one. If they are equal, mark neither.
-   Use the same strictness for both designs. Do not give credit for a change that the adapted design does not contain.
+   Use the same strictness for both designs. Give no credit for a change that the adapted design does not contain.
 5. **Count.**
    - S = number of test stressors
    - N = number that the naive design survives, plus the number where neither survives and the naive design is better
@@ -69,8 +69,10 @@ If the user gives a run record directory, read and write files there. Start each
    - Ri > 0: the adapted design survives unknown events better.
    - Ri = 0: no difference.
    - Ri < 0: the adapted design is worse.
+
+   Limits of Ri for this test set: maximum (S - N) / S, minimum -N / S. If S - N < 5, Ri cannot show an effect. Report this. Recommend more stressors or repeated splits (step 9).
 8. **Find regressions.** List the stressors that the naive design survives and the adapted design does not.
-9. **Optional: repeat.** If the user asks, repeat with different splits. Report the range of Ri.
+9. **Optional: repeat.** If the user asks, repeat with different splits. Each split needs its own adaptation (skill `adapt-design`): an adaptation must not use its test stressors. Report the range of Ri.
 
 ## Rules
 
@@ -94,7 +96,7 @@ If the user gives a run record directory, read and write files there. Start each
    | T02 | A key supplier goes bankrupt. | no | no | adapted | manual fallback C07 |
 
 4. Counts: S, N, R. Result of the count checks.
-5. Ri, and its interpretation.
+5. Ri, its limits, and its interpretation.
 6. Regressions.
 7. Uncertain decisions: number and IDs.
 8. Next steps: stressors that both designs fail. Use them in a new adaptation pass. After that use, they are not test stressors.

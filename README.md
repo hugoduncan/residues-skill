@@ -26,7 +26,12 @@ Each skill works alone. The skills share data through a run record: a directory 
 
 ## Status
 
-Experimental. The skills are tested once, on their own design (see [examples/self-analysis](examples/self-analysis/)). They are not yet tested on a real system design. File formats and skill text can change without backward compatibility.
+Experimental. The skills are tested on two designs:
+
+- Their own design: [examples/self-analysis](examples/self-analysis/). Ri = 0.27.
+- A real library, [value-type](https://github.com/hugoduncan/value-type): [examples/value-type](examples/value-type/). Ri = 0.00, no regressions. The original design survives 16 of 18 test stressors, so Ri can be at most 0.11.
+
+File formats and skill text can change without backward compatibility.
 
 ## AI usage
 
@@ -100,6 +105,12 @@ python3 skills/find-hidden-coupling/scripts/coupling.py stressor-runs/r1
 ```
 
 Details of each step are in the `SKILL.md` file of each skill.
+
+### Limits
+
+- **Coupling limits.** `find-hidden-coupling` marks a pair as coupled at similarity ≥ 0.5 and ≥ 3 shared stressors. A design that shows its connections well can have no hidden pairs at these limits. The skill then runs again at similarity 0.35 and 0.3, and reports those pairs separately.
+- **Ri limits.** Ri can be at most (S − N) / S. If the original design survives most test stressors, Ri cannot show an effect. `evaluate-design` reports the limits. For a design with a strong risk analysis, generate more stressors (for example 120), or repeat the split and the adaptation, and report the range of Ri.
+- **Order.** `generate-stressors` adds stressors in the coverage step, and splits after that. Do not add stressors after the split.
 
 ## Background
 

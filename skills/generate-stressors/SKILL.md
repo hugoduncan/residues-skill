@@ -8,7 +8,7 @@ description: >
   analysis. Triggers: "stressors", "stress the design", "what could hit this
   system", "unknown events", "residual analysis input".
 license: EPL-2.0
-lambda: "λdesign. scope ∧ unique(elements(design)) → generate(categories × techniques, ¬probability, include(absurd)) → stressors{id category event affects set} → split? → coverage → run_record"
+lambda: "λdesign. scope ∧ unique(elements(design)) → generate(categories × techniques, ¬probability, include(absurd)) → stressors{id category event affects} → coverage(add) → split? → run_record"
 metadata:
   tags: "architecture, design, resilience, stressors"
 ---
@@ -53,10 +53,12 @@ Do not change files that other skills wrote. If there is no file access, output 
 3. **Write each stressor** with the rules in "Stressor quality".
 4. **Map.** For each stressor, list the IDs of the elements that it affects. If it affects no element, write `none`. Do not describe how the design responds.
 5. **Remove duplicates.** Merge two stressors only if they are the same event. Keep different events that affect the same elements. That overlap is useful.
-6. **Report coverage.** Count stressors for each category. Identify categories with few stressors and elements with no stressors. Generate more stressors for these gaps.
-7. **Split, only if the user plans to change or evaluate the design.** Mark 25% of the stressors `test` (or the share the user gives, 20% to 30%). Mark the rest `training`. Each stressor is in exactly one set. Select at random: use code with a seed if possible, else take every fourth stressor in ID order. Record the method and the date in the first line of `stressors.tsv`. Do not change the split later. If the user does not plan this, leave `set` empty.
+6. **Report coverage.** Count stressors for each category. Identify categories with few stressors and elements with no stressors. Generate more stressors for these gaps. Add all stressors in this step, before the split.
+7. **Split, after coverage, only if the user plans to change or evaluate the design.** Mark 25% of the stressors `test` (or the share the user gives, 20% to 30%). Mark the rest `training`. Each stressor is in exactly one set. Select at random: use code with a seed if possible, else take every fourth stressor in ID order. Record the method and the date in the first line of `stressors.tsv`. Do not change the split later. Do not add stressors after the split. If the user does not plan this, leave `set` empty.
 
 Default quantity: 60 stressors. Use the quantity that the user gives, if any. Use at least 8 categories. Make at least 10% absurd.
+
+If the user plans to evaluate a design that already has a strong risk analysis, recommend more stressors, for example 120. The original design will survive most test stressors, and evaluation needs enough failures to measure.
 
 ## Stressor quality
 

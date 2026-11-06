@@ -9,7 +9,7 @@ description: >
   Triggers: "hidden coupling", "incidence matrix", "which components are coupled",
   "vulnerable components", "dangerous stressors", "where to put boundaries".
 license: EPL-2.0
-lambda: "λ(stressors, design). normalise(unique(elements)) → script(matrix(stressor × element)) → mapping_check → {vulnerable dangerous similar(pairs) ∖ connected(design)} → groups → boundary_candidates"
+lambda: "λ(stressors, design). normalise(unique(elements)) → script(matrix(stressor × element)) → mapping_check → {vulnerable dangerous similar(pairs) ∖ connected(design)} → (hidden = ∅ → sensitivity(lower similarity)) → groups → boundary_candidates"
 metadata:
   tags: "architecture, design, coupling, resilience, stressors"
 ---
@@ -43,7 +43,7 @@ If the user gives a run record directory, read and write files there. Start each
 | `connections.tsv` | write. Columns: `from`, `to`. One row for each "from uses to". |
 | `coupling.md` | write. The output. |
 
-Without a run record, use the same file formats in a temporary directory, or work in the conversation.
+Without a run record, use the same file formats in a temporary directory.
 
 ## Procedure
 
@@ -54,6 +54,7 @@ Without a run record, use the same file formats in a temporary directory, or wor
    - Record each change to elements or to `affects` in `coupling.md`.
 2. **Write the connections.** From the design, write `connections.tsv`.
 3. **Run the counts.** Run `python3 scripts/coupling.py <run-dir>` from this skill directory. Options: `--min-similarity` (default 0.5), `--min-shared` (default 3), `--force`. Use smaller limits if the user gives them, or if there are fewer than 20 stressors. The script ignores `test` rows.
+   - If the default limits find no hidden pairs, run again with `--min-similarity 0.35`, then `0.3`, as a sensitivity check. A well-documented design often has hidden pairs only at lower limits. Report them separately, with their limits.
    - Exit 2: invalid input (duplicate stressor IDs, unknown elements). Correct the input. Run again.
    - Exit 3: the mapping check failed. Go to step 4.
    - Without a code tool: count by hand. Compare only pairs with at least the minimum shared stressors. Count the top three results of each list a second time.
@@ -92,7 +93,7 @@ The script does these calculations on the training stressors:
 1. Changes to elements and mapping (step 1).
 2. Mapping check result.
 3. Vulnerable elements. Dangerous stressors.
-4. Coupled pairs:
+4. Coupled pairs, one table for each set of limits:
 
    | A | B | Shared | Similarity | In design | Stressors |
    |---|---|---|---|---|---|
