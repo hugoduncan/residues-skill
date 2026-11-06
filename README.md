@@ -80,3 +80,9 @@ Details of each step are in the `SKILL.md` file of each skill.
 - [ramora/stressors.md](ramora/stressors.md) and [ramora/residues.md](ramora/residues.md): summaries of the concepts.
 - O'Reilly, B. M. (2022). Residuality Theory, random simulation, and attractor networks. Procedia Computer Science 201: 639–645. https://doi.org/10.1016/j.procs.2022.03.084
 - O'Reilly, B. M. (2020). An introduction to residuality theory: Software design heuristics for complex systems. Procedia Computer Science 170: 875–880. https://doi.org/10.1016/j.procs.2020.03.120
+
+## License
+
+Copyright © 2026 Hugo Duncan.
+
+Distributed under the [Eclipse Public License 2.0](LICENSE). No Secondary Licenses apply.
