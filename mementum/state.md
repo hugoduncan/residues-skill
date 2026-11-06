@@ -10,8 +10,8 @@ Source paper: https://doi.org/10.1016/j.procs.2022.03.084
 ## Current
 
 - Protocols initialised: mementum, munera, ramora.
-- Ramora documents: ramora/stressors.md, ramora/residues.md. Source: O'Reilly 2022, via pragsmike/cyberneutics extract.
-- Open gap: formula for residual index Ri is not in the 2022 source. It is in O'Reilly 2020. Not verified.
+- Ramora documents: ramora/stressors.md, ramora/residues.md. Sources: O'Reilly 2022 (via pragsmike/cyberneutics), O'Reilly 2020.
+- Ri = (R - N) / S. Verified from the 2022 PDF (equation image, p. 644).
 - No skill content yet.
 - No open tasks.
 

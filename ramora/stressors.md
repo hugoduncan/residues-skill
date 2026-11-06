@@ -4,7 +4,9 @@ Source: O'Reilly, B. M. (2022). Residuality Theory, random simulation, and attra
 
 Overview used: https://github.com/pragsmike/cyberneutics/blob/main/references/papers/Residuality-Oreilly-2022.md
 
-Section references (§) refer to the source.
+Second source: O'Reilly, B. M. (2020). An introduction to residuality theory: Software design heuristics for complex systems. Procedia Computer Science 170: 875–880. https://doi.org/10.1016/j.procs.2020.03.120
+
+Section references (§) refer to the 2022 source.
 
 ## Definition
 
@@ -49,14 +51,14 @@ Residual analysis increases the randomness and the sample size of the simulation
 
 The business environment has many more attractors than the software. Thus many different stressors move the software to the same attractor. A stressor with almost zero probability can point to an attractor. The system can need that attractor to survive a different, less visible stressor. (§4)
 
-Thus random stressors show the unknown K: hidden connections, that is, hyperliminal coupling. (§4) For K and attractors, see [residues.md](residues.md).
+Thus random stressors show the unknown K: hidden connections, that is, hyperliminal coupling. (§4) For K and attractors, see [residues/nkp-analysis.md](residues/nkp-analysis.md) and [residues/definition.md](residues/definition.md).
 
 ## Stressor analysis
 
 Stressor analysis is step 1 of the two-step algorithm of residual analysis (§2, §4):
 
 1. Random simulation of the environment with stressors.
-2. Network analysis of the software structure (NKP analysis). See [residues.md](residues.md).
+2. Network analysis of the software structure (NKP analysis). See [residues/nkp-analysis.md](residues/nkp-analysis.md).
 
 The two steps are present implicitly in all software design methods. Residual analysis makes them explicit and increases their effect. (§4, §5)
 
@@ -70,15 +72,18 @@ The matrix shows:
 - the most dangerous stressors
 - components with similar patterns. These components have hyperliminal coupling. Group them.
 
-Use the incidence matrix together with the adjacency matrix. See [residues.md](residues.md).
+Use the incidence matrix together with the adjacency matrix. See [residues/nkp-analysis.md](residues/nkp-analysis.md).
 
 ## Training set and testing set
 
 Divide the stressors into a training set and a testing set. (§4)
 
 - Use the training set to drive the design.
-- Use the testing set after the design to measure the result with the residual index Ri. See [residues.md](residues.md).
+- Use the testing set after the design to measure the result with the residual index Ri. See [residues/residual-index.md](residues/residual-index.md).
+- Repeat with different training sets and testing sets, in different orders (bagging and boosting). (O'Reilly 2020 §3)
+
+One residue relates to many stressors. Thus a change for one stressor can also help the system survive other stressors. See [residues/definition.md](residues/definition.md).
 
 ## Related
 
-- [residues.md](residues.md): residue, attractor, NKP analysis, adjacency matrix, residual index
+- [residues.md](residues.md): index of residue documents: definition, attractors, NKP analysis, adjacency matrix, residual index
