@@ -12,12 +12,13 @@ Source paper: https://doi.org/10.1016/j.procs.2022.03.084
 - Protocols initialised: mementum, munera, ramora.
 - Ramora documents: ramora/stressors.md, ramora/residues.md. Sources: O'Reilly 2022 (via pragsmike/cyberneutics), O'Reilly 2020.
 - Ri = (R - N) / S. Verified from the 2022 PDF (equation image, p. 644).
-- No skill content yet.
+- Skill: skills/generate-stressors/SKILL.md. Self-contained. Generates stressors for a design (categories × techniques, element mapping, coverage).
 - No open tasks.
 
 ## Next
 
-- Define the residues skill scope. Create the first munera task.
+- Test generate-stressors on a sample design.
+- Possible next skills: incidence-matrix analysis, residue design, Ri evaluation.
 
 ## Related
 
