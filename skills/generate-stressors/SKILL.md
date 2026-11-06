@@ -7,7 +7,7 @@ description: >
   list unexpected events for a system, or prepare input for an impact or coupling
   analysis. Triggers: "stressors", "stress the design", "what could hit this
   system", "unknown events", "residual analysis input".
-lambda: "λdesign. elements(design) → generate(categories × techniques, ¬probability, include(absurd)) → stressors{id category event affects} → coverage"
+lambda: "λdesign. scope ∧ unique(elements(design)) → generate(categories × techniques, ¬probability, include(absurd)) → stressors{id category event affects set} → split? → coverage → run_record"
 metadata:
   tags: ["architecture", "design", "resilience", "stressors"]
 ---
@@ -31,55 +31,31 @@ A design or architecture: a document, a diagram description, code, or a conversa
 
 If the design is not clear, ask for it. Do not invent the design.
 
+## Run record
+
+Write the results to a run record: a directory that the user chooses, for example `stressor-runs/<run-id>/`. Other skills read it. Start each file with the line `# run: <run-id> | date: <date> | skill: generate-stressors`.
+
+| File | Content |
+|---|---|
+| `design.md` | The design, or a reference to it. Scope and level of detail. |
+| `elements.tsv` | Columns: `id`, `name`, `kind`, `description`. |
+| `stressors.tsv` | Columns: `id`, `category`, `stressor`, `affects`, `set`. `affects` is a comma-separated list of element IDs. |
+
+Do not change files that other skills wrote. If there is no file access, output each file as a fenced block under its file name. The user saves them.
+
 ## Procedure
 
-1. **Extract the elements.** List the elements of the design that a stressor can touch. Use the names from the design.
-   - actors: users, customers, staff, partners
-   - components and services
-   - information flows: data from one actor or component to a different one
-   - data stores
-   - infrastructure and platforms
-   - external dependencies: suppliers, third-party services, standards
-   - business context: revenue, contracts, regulation, market
-2. **Generate.** Combine each category with different techniques (see tables). Do not select only the combinations that seem likely. Move through the combinations in a fixed or random order.
+1. **Extract the elements.** List the elements of the design that a stressor can touch: actors, components, information flows, data stores, infrastructure, external dependencies, business context.
+   - If the design is too large to read completely, agree a scope or a coarse level of detail with the user. Record it in `design.md`.
+   - Give each element a unique ID. If two elements have the same name, add a qualifier, for example `service (billing)`. Do not merge elements only because their names are the same.
+2. **Generate.** Read [reference/prompts.md](reference/prompts.md). Combine each category with different techniques. Do not select only the combinations that seem likely. Move through the combinations in a fixed or random order.
 3. **Write each stressor** with the rules in "Stressor quality".
-4. **Map.** For each stressor, list the elements that it affects. Use the element names from step 1. If a stressor affects no element, keep it and write "none". Do not describe how the design responds.
+4. **Map.** For each stressor, list the IDs of the elements that it affects. If it affects no element, write `none`. Do not describe how the design responds.
 5. **Remove duplicates.** Merge two stressors only if they are the same event. Keep different events that affect the same elements. That overlap is useful.
 6. **Report coverage.** Count stressors for each category. Identify categories with few stressors and elements with no stressors. Generate more stressors for these gaps.
+7. **Split, only if the user plans to change or evaluate the design.** Mark 25% of the stressors `test` (or the share the user gives, 20% to 30%). Mark the rest `training`. Each stressor is in exactly one set. Select at random: use code with a seed if possible, else take every fourth stressor in ID order. Record the method and the date in the first line of `stressors.tsv`. Do not change the split later. If the user does not plan this, leave `set` empty.
 
 Default quantity: 60 stressors. Use the quantity that the user gives, if any. Use at least 8 categories. Make at least 10% absurd.
-
-## Categories
-
-| Category | Examples of sources |
-|---|---|
-| Market | competitors, demand, new products, market collapse |
-| Customers and users | behavior, volume, expectations, abuse, a new type of user |
-| Organisation and people | key staff, reorganisation, merger, strike, skills |
-| Law and regulation | new law, audit, data residency, licence, court decision |
-| Money | cost, price, currency, funding, payment method |
-| Suppliers and partners | supplier failure, contract change, acquisition, price change |
-| Technology | platform end of life, outage, vendor lock, library change |
-| Data | wrong data, lost data, new data source, schema change, volume |
-| Security | attack, leaked credentials, insider, fraud |
-| Physical world | weather, fire, pandemic, power, geography |
-| Society and politics | sanctions, war, public opinion, media |
-| Time | deadlines, time zones, slow change over years, sudden change |
-| Absurd | impossible or ridiculous events |
-
-## Techniques
-
-| Technique | Prompt |
-|---|---|
-| Remove | An actor, supplier, flow, store or component is removed. |
-| Scale | A quantity becomes 0, 10 times, or 1000 times larger. |
-| Reverse | A flow or relationship goes in the opposite direction. A partner becomes a competitor. |
-| Change the rules | A law, contract, policy or price changes. |
-| Replace | A different actor, technology or supplier takes the place of the current one. |
-| Corrupt | Data, a message or a person gives wrong information. |
-| Delay | An event or flow is late by seconds, days or years. |
-| Combine | Two unrelated stressors occur at the same time. |
-| Absurd | Something impossible happens. Make it concrete. |
 
 ## Stressor quality
 
@@ -87,28 +63,23 @@ Default quantity: 60 stressors. Use the quantity that the user gives, if any. Us
 - Make it concrete: who or what changes, and how.
 - Write the event, not the effect on the system. Correct: "The payment provider triples its fees." Incorrect: "Payments become expensive."
 - Do not include probability, impact scores or mitigations.
-- Use short sentences.
 
 ## Output
 
-A markdown table, then a coverage summary.
+The run record files, and this table and coverage summary for the user:
 
-| ID | Category | Stressor | Affects |
-|---|---|---|---|
-| S01 | Suppliers and partners | The payment provider triples its fees. | payment service, pricing, checkout flow |
-| S02 | Law and regulation | A new law requires that all customer data stays in the country of the customer. | customer store, analytics flow, cloud region |
-| S03 | Absurd | All customers change their names to the same name on the same day. | customer store, identity service, support staff |
+| id | category | stressor | affects | set |
+|---|---|---|---|---|
+| S01 | Suppliers and partners | The payment provider triples its fees. | payment-svc, pricing, checkout-flow | training |
+| S02 | Law and regulation | A new law requires that all customer data stays in the country of the customer. | customer-db, analytics-flow, cloud-region | test |
+| S03 | Absurd | All customers change their names to the same name on the same day. | customer-db, identity-svc, support-staff | training |
 
-Coverage summary:
+Coverage summary: stressors for each category, elements with no stressors, elements that many stressors affect.
 
-- number of stressors for each category
-- elements with no stressors
-- elements that many stressors affect
-
-Add columns or sections only if the user asks. For example, if the user asks for a test set, mark a random 20% to 30% of the stressors as "test". Do not use the test set to change the design.
+Add other columns only if the user asks.
 
 ## Related skills
 
-- `find-hidden-coupling`: uses the stressors and the "Affects" column to find coupled elements.
-- `adapt-design`: changes the design so that it survives the stressors.
-- `evaluate-design`: uses test stressors to compare the original and the changed design.
+- `find-hidden-coupling`: uses `affects` to find coupled elements.
+- `adapt-design`: changes the design so that it survives the training stressors.
+- `evaluate-design`: uses the test stressors to compare the original and the changed design.

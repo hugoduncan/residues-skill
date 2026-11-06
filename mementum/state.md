@@ -22,8 +22,10 @@ Source paper: https://doi.org/10.1016/j.procs.2022.03.084
 
 ## Next
 
-- Self-analysis done: examples/self-analysis/ (pipeline run on its own design). Ri = 0.27 (15 test stressors). Proposed changes C01–C09 not applied. Open decisions D1–D4 need the user.
-- Next: user decides D1–D4 → apply C01–C09 to skills → second pass with S18, S35, S41, S44, S52.
+- Self-analysis: examples/self-analysis/ (pipeline run on its own design). Ri = 0.27 (15 test stressors).
+- C01–C09 applied. Skills share a run record directory (design.md, elements.tsv, stressors.tsv with set column, connections.tsv, coupling.md, criteria.md, naive.md, adaptation.md, adapted.md, evaluation.md). Each file starts with `# run: <id> | date: <date> | skill: <name>`.
+- Decisions: D1 keep lambda/metadata frontmatter. D2 split only when user plans to adapt; adapt-design requires a split. D3 no file access → fenced blocks. D4 Python script: skills/find-hidden-coupling/scripts/coupling.py (+ test_coupling.py).
+- Next: second pass with S18, S35, S41, S44, S52 (repeatability, duplicate IDs, prompt injection, malicious fork, skill versions).
 
 ## Related
 

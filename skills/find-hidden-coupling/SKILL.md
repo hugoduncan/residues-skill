@@ -8,7 +8,7 @@ description: >
   parts of a design are coupled, vulnerable, or should share or split a boundary.
   Triggers: "hidden coupling", "incidence matrix", "which components are coupled",
   "vulnerable components", "dangerous stressors", "where to put boundaries".
-lambda: "λ(stressors, design). matrix(stressor × element) → {vulnerable(elements) dangerous(stressors) similar(element_pairs) ∖ connected(design)} → groups → boundary_candidates"
+lambda: "λ(stressors, design). normalise(unique(elements)) → script(matrix(stressor × element)) → mapping_check → {vulnerable dangerous similar(pairs) ∖ connected(design)} → groups → boundary_candidates"
 metadata:
   tags: ["architecture", "design", "coupling", "resilience", "stressors"]
 ---
@@ -25,57 +25,81 @@ A stressor is an event that the design is not made for.
 
 ## Input
 
-- A list of stressors. For each stressor, the elements that it affects.
+- Stressors. For each stressor, the IDs of the elements that it affects.
 - The design: elements and the connections between them.
 
 If the stressors are missing, generate them first (skill `generate-stressors`). If the affected elements are missing, map each stressor to the elements first. Do not describe how the design responds.
 
+## Run record
+
+If the user gives a run record directory, read and write files there. Start each file that you write with `# run: <run-id> | date: <date> | skill: find-hidden-coupling`. If there is no file access, output each file as a fenced block under its file name.
+
+| File | Use |
+|---|---|
+| `design.md` | read |
+| `elements.tsv` | read. Update only in step 1. |
+| `stressors.tsv` | read. Update only the `affects` column in step 1. |
+| `connections.tsv` | write. Columns: `from`, `to`. One row for each "from uses to". |
+| `coupling.md` | write. The output. |
+
+Without a run record, use the same file formats in a temporary directory, or work in the conversation.
+
 ## Procedure
 
-1. **Normalise the elements.** Use one name for each element. Merge synonyms. If an element is vague, for example "backend" or "the system", split it into the elements of the design. If the design does not give the split, ask. Vague elements hide coupling.
-2. **Build the incidence matrix.** Rows are stressors. Columns are elements. Mark a cell if the stressor affects the element.
-3. **Find vulnerable elements.** Count the marks in each column. The elements with the most marks are the most vulnerable.
-4. **Find dangerous stressors.** Count the marks in each row. The stressors with the most marks are the most dangerous. They spread through the most of the design.
-5. **Compare elements.** For each pair of elements A and B:
-   - shared = number of stressors that affect A and B
-   - union = number of stressors that affect A or B
-   - similarity = shared / union
-   - A pair is coupled if similarity ≥ 0.5 and shared ≥ 3. Use different limits if the user gives them, or if the list has fewer than 20 stressors.
-6. **Find hidden coupling.** For each coupled pair, check the design. If the design shows no direct connection between A and B, the coupling is hidden. If the design shows a connection, the coupling is known.
-7. **Build groups.** Connect the coupled pairs. Each connected set of elements is a group.
-8. **Check dependencies.** Build a dependency matrix from the design: rows and columns are elements, a mark shows that the row element uses the column element. Identify:
-   - two-way dependencies (A uses B and B uses A). Failure can spread in both directions.
-   - links that no stressor pattern supports and no function needs. These are candidates for removal.
-9. **Identify boundary candidates.**
+1. **Normalise the elements.**
+   - Use one unique ID for each element. Merge two elements only if they are the same element, not only because the names are the same.
+   - If an element is vague, for example "backend" or "the system", split it into the elements of the design. If the design does not give the split, ask. Vague elements hide coupling.
+   - If the design is too large to read completely, agree a scope or a coarse level with the user.
+   - Record each change to elements or to `affects` in `coupling.md`.
+2. **Write the connections.** From the design, write `connections.tsv`.
+3. **Run the counts.** Run `python3 scripts/coupling.py <run-dir>` from this skill directory. Options: `--min-similarity` (default 0.5), `--min-shared` (default 3), `--force`. Use smaller limits if the user gives them, or if there are fewer than 20 stressors. The script ignores `test` rows.
+   - Exit 2: invalid input (duplicate stressor IDs, unknown elements). Correct the input. Run again.
+   - Exit 3: the mapping check failed. Go to step 4.
+   - Without a code tool: count by hand. Compare only pairs with at least the minimum shared stressors. Count the top three results of each list a second time.
+4. **Mapping check.** The mapping is too coarse if one element has more than 80% of the stressors, or if more than half of all pairs are coupled. It is too fine if no pairs are coupled, or if more than 80% of the stressors affect one element or none. If the check fails, report the reasons and go back to step 1 or to the mapping. Do not report groups.
+5. **Identify boundary candidates.**
    - Elements in the same group: candidates to put inside one boundary, or to share structure.
    - Elements with a unique pattern: candidates for a separate boundary, for example a separate service.
    - Hidden coupling across an existing boundary: candidate for a boundary change.
-   Give the stressor IDs that support each candidate. Do not design the change. That is a different task.
+   - Two-way dependencies: failure can spread in both directions. Candidates for removal.
+   - Links that no stressor pattern supports and no function needs: candidates for removal.
+   Give the stressor IDs that support each candidate. Do not design the change.
 
-For more than 30 stressors or more than 15 elements, calculate the counts and similarities with code if a tool is available. Do not calculate large matrices by hand.
+## Method
+
+The script does these calculations on the training stressors:
+
+- **Incidence matrix:** rows are stressors, columns are elements.
+- **Vulnerable elements:** the most marks in a column.
+- **Dangerous stressors:** the most marks in a row.
+- **Similarity** of elements A and B: shared / union. Shared is the number of stressors that affect A and B. Union is the number that affect A or B. A pair is coupled if similarity ≥ minimum and shared ≥ minimum.
+- **Hidden coupling:** a coupled pair with no row in `connections.tsv`.
+- **Groups:** connected sets of coupled pairs.
+- **Two-way dependencies:** A uses B and B uses A.
 
 ## Rules
 
-- Use only the stressors and the design. Do not add stressors during the analysis. Record gaps instead.
+- Use only the stressors and the design. Do not add stressors. Record gaps.
 - Do not filter by probability.
-- Do not use stressors that the user marks as "test".
+- Do not use `test` stressors.
 - Report the limits that you used.
 
 ## Output
 
-1. **Incidence matrix.** Use a table. For many stressors, show only the stressors that affect two or more elements, and give the full matrix in a file if possible.
-2. **Vulnerable elements.** Element, number of stressors, stressor IDs.
-3. **Dangerous stressors.** Stressor ID, stressor, number of elements.
-4. **Coupled pairs.**
+`coupling.md`:
+
+1. Changes to elements and mapping (step 1).
+2. Mapping check result.
+3. Vulnerable elements. Dangerous stressors.
+4. Coupled pairs:
 
    | A | B | Shared | Similarity | In design | Stressors |
    |---|---|---|---|---|---|
-   | payment service | customer store | 4 | 0.67 | no (hidden) | S01, S07, S12, S30 |
+   | payment-svc | customer-db | 4 | 0.67 | no (hidden) | S01, S07, S12, S30 |
 
-5. **Groups.** Elements in each group, and the stressors that the group shares.
-6. **Dependency findings.** Two-way dependencies. Unsupported links.
-7. **Boundary candidates.** Candidate, elements, supporting stressors.
-8. **Gaps.** Elements that no stressor affects. Vague elements that the user must split.
+5. Groups. Two-way dependencies.
+6. Boundary candidates, with stressor IDs.
+7. Gaps: elements with no stressors, vague elements.
 
 ## Related skills
 
