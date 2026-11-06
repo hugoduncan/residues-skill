@@ -22,7 +22,8 @@ Source paper: https://doi.org/10.1016/j.procs.2022.03.084
 
 ## Next
 
-- Test the skill pipeline end to end on a sample design.
+- Self-analysis done: examples/self-analysis/ (pipeline run on its own design). Ri = 0.27 (15 test stressors). Proposed changes C01–C09 not applied. Open decisions D1–D4 need the user.
+- Next: user decides D1–D4 → apply C01–C09 to skills → second pass with S18, S35, S41, S44, S52.
 
 ## Related
 
