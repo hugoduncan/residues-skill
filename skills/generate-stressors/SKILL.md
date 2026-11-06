@@ -106,3 +106,9 @@ Coverage summary:
 - elements that many stressors affect
 
 Add columns or sections only if the user asks. For example, if the user asks for a test set, mark a random 20% to 30% of the stressors as "test". Do not use the test set to change the design.
+
+## Related skills
+
+- `find-hidden-coupling`: uses the stressors and the "Affects" column to find coupled elements.
+- `adapt-design`: changes the design so that it survives the stressors.
+- `evaluate-design`: uses test stressors to compare the original and the changed design.

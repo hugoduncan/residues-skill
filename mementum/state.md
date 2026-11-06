@@ -12,13 +12,17 @@ Source paper: https://doi.org/10.1016/j.procs.2022.03.084
 - Protocols initialised: mementum, munera, ramora.
 - Ramora documents: ramora/stressors.md, ramora/residues.md. Sources: O'Reilly 2022 (via pragsmike/cyberneutics), O'Reilly 2020.
 - Ri = (R - N) / S. Verified from the 2022 PDF (equation image, p. 644).
-- Skill: skills/generate-stressors/SKILL.md. Self-contained. Generates stressors for a design (categories × techniques, element mapping, coverage).
+- Skills (self-contained, no theory needed), pipeline order:
+  - skills/generate-stressors: design → stressors + affected elements
+  - skills/find-hidden-coupling: stressor × element matrix → vulnerable, dangerous, coupled groups
+  - skills/adapt-design: apply training stressors → smallest changes → consolidate
+  - skills/evaluate-design: test stressors on naive vs adapted → Ri = (R - N) / S
+- Decision: evaluate-design counts a tie (neither survives, equal) for neither design. Source does not define ties.
 - No open tasks.
 
 ## Next
 
-- Test generate-stressors on a sample design.
-- Possible next skills: incidence-matrix analysis, residue design, Ri evaluation.
+- Test the skill pipeline end to end on a sample design.
 
 ## Related
 
