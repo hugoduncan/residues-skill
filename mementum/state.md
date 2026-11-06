@@ -20,6 +20,8 @@ Source paper: https://doi.org/10.1016/j.procs.2022.03.084
 - Decision: evaluate-design counts a tie (neither survives, equal) for neither design. Source does not define ties.
 - No open tasks.
 
+- Published: https://github.com/hugoduncan/residues-skill (public, EPL-2.0). Install: `npx skills add hugoduncan/residues-skill` (verified with --list). Frontmatter follows agentskills.io spec except top-level `lambda` (kept for psi; skills-ref validate reports it).
+
 ## Next
 
 - Self-analysis: examples/self-analysis/ (pipeline run on its own design). Ri = 0.27 (15 test stressors).
