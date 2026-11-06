@@ -1,0 +1,76 @@
+# run: value-type-r1 | date: 2026-11-06 | skill: generate-stressors
+# split: random.Random(20261106).sample, 18/73 test (25%), date 2026-11-06, before adaptation
+id	category	stressor	affects	set
+S01	Market	Clojure core adds value-class support to deftype in a release.	lib-author,closed-record,core-macro,docs,user-code	test
+S02	Market	A competing library gives value classes through gen-class and an annotation, and takes most users.	lib-author,docs,maintainer	test
+S03	Market	closed-record removes its value-type dependency and emits value classes itself.	closed-record,core-macro	training
+S04	Market	Users ask for the same defvaluetype source to work on ClojureScript and ClojureCLR.	lib-author,core-macro,fields,docs	test
+S05	Market	Oracle stops Project Valhalla. No more EA builds are released.	valhalla-jvm,classfile-api,jdk-internal-value,value-transform,array-adapter,cap-probe,docs,test-matrix	training
+S06	Customers and users	A user defines a type with 2000 fields.	core-macro,fields,value-transform,identity-backend,clj-compiler	training
+S07	Customers and users	A popular library calls locking on value objects in a common code path.	user-code,valhalla-jvm,docs	test
+S08	Customers and users	A large user AOT-compiles an application on Java 8 and deploys it on a Valhalla JVM with policy error.	aot-output,runtime-policy,app-author,valhalla-jvm	test
+S09	Customers and users	A code generator evaluates 100000 defvaluetype forms at run time.	core-macro,loader,clj-compiler,cap-probe,runtime-policy	test
+S10	Customers and users	Data scientists start to allocate arrays of one billion value objects.	array-api,array-adapter,jdk-internal-value,valhalla-jvm	training
+S11	Customers and users	Java-only teams load AOT value types with Class.forName and no Clojure source.	aot-output,runtime-policy,user-code	test
+S12	Organisation and people	The only maintainer stops work for one year.	maintainer,release,test-matrix,docs,ai-agents	test
+S13	Organisation and people	The maintainer's employer forbids publication of code that depends on EA JVMs.	maintainer,release,source-jar	training
+S14	Organisation and people	The AI model provider replaces the model. The new model ignores Simplified Technical English and Ramora rules.	ai-agents,docs,quality-ci	test
+S15	Organisation and people	A second maintainer joins. They know the class-file format but not the Clojure compiler.	maintainer,loader,clj-compiler,docs	training
+S16	Organisation and people	The closed-record author demands per-type fallback overrides and forks value-type.	closed-record,runtime-policy,core-macro	training
+S17	Organisation and people	The maintainer decides to merge value-type into closed-record.	maintainer,closed-record,core-macro,release,docs	training
+S18	Law and regulation	Oracle changes the EA build licence: no use in CI without an agreement.	valhalla-jvm,test-matrix,quality-ci,app-author	test
+S19	Law and regulation	A court decides that shipping software that needs --add-exports of internal JDK packages breaks the JDK licence.	jdk-internal-value,jvm-flags,array-adapter,app-author	training
+S20	Law and regulation	Clojars removes all EPL-licensed artifacts after a licence dispute.	release,source-jar,lib-author	test
+S21	Law and regulation	A regulation requires signed, reproducible builds of all dependencies.	source-jar,release,quality-ci	training
+S22	Money	GitHub Actions stops free minutes for public repositories.	quality-ci,test-matrix,release	training
+S23	Money	Each new JVM row doubles the matrix cells. CI cost increases 10 times.	test-matrix,quality-ci,maintainer	training
+S24	Money	A sponsor pays for support of five EA builds at the same time.	valhalla-jvm,cap-probe,value-transform,test-matrix,maintainer	training
+S25	Money	The price of the AI agent service triples.	ai-agents,maintainer	training
+S26	Suppliers and partners	Clojure 1.13 adds a hidden field to deftype classes and changes the constructor order.	clj-compiler,value-transform,identity-backend,loader,fields,test-matrix	training
+S27	Suppliers and partners	Clojure removes the bundled clojure.asm package.	clojure-asm,identity-backend,cap-probe,clj-compiler	training
+S28	Suppliers and partners	Clojure changes Compiler/LOADER so that let pushes a new loader.	clj-compiler,loader,core-macro,expansion-transfer	training
+S29	Suppliers and partners	Clojars closes.	release,source-jar,lib-author	training
+S30	Suppliers and partners	The Scry test runner is abandoned and fails on a new Clojure release.	test-matrix,quality-ci	training
+S31	Suppliers and partners	The next EA build renames the methods of jdk.internal.value.ValueClass.	jdk-internal-value,array-adapter,field-cap-probe,capability-report	test
+S32	Technology	A new EA build changes the ACC_STRICT_INIT value and the class version rule.	valhalla-jvm,classfile-api,value-transform,cap-probe,aot-output,test-matrix	training
+S33	Technology	JEP 401 becomes final in JDK 28. The preview minor version and --enable-preview are not used.	valhalla-jvm,value-transform,cap-probe,jvm-flags,docs,aot-output,array-adapter	training
+S34	Technology	The JVM replaces the NullRestricted annotation with a null-marker in field descriptors.	jdk-internal-value,value-transform,field-cap-probe,fields	training
+S35	Technology	GraalVM native-image becomes the usual deployment target for Clojure applications.	aot-output,loader,clj-compiler,cap-probe,app-author	training
+S36	Technology	CIDER starts to macroexpand each top-level form on each keystroke.	tooling,expansion-transfer,loader,core-macro	test
+S37	Technology	The java.lang.classfile API changes the signatures of ClassFile.of and its options.	classfile-api,value-transform	training
+S38	Technology	A JIT defect in an EA build gives wrong values from flattened arrays.	valhalla-jvm,array-api,user-code,benchmarks	test
+S39	Data	A field tag names a class that a sibling plugin class loader defines.	fields,loader,clj-compiler,user-code	training
+S40	Data	AOT class files from a different JDK feature release are on the class path.	aot-output,valhalla-jvm,runtime-policy	training
+S41	Data	A production launcher sets value-type.fallback=wran.	jvm-flags,runtime-policy,app-author	training
+S42	Data	A user persists serialized value objects and reads them on a fallback JVM.	user-code,baseline-jvm,valhalla-jvm,docs	test
+S43	Data	Monitoring parses the capability report. A release adds and renames keys.	capability-report,app-author	training
+S44	Security	An attacker publishes a malicious fork on Clojars with a similar coordinate.	release,lib-author,source-jar	training
+S45	Security	A deployment platform forbids custom class loaders.	loader,clj-compiler,cap-probe,field-cap-probe,app-author	training
+S46	Security	A CVE in clojure.asm forces an urgent Clojure update.	clojure-asm,clj-compiler,identity-backend,release	training
+S47	Security	A library writes nil into a non-nil field through Unsafe. An attacker uses the resulting NullPointerException.	user-code,fields,docs	training
+S48	Security	An attacker takes the maintainer's GitHub account and release.yml publishes a bad JAR.	release,quality-ci,maintainer	training
+S49	Physical world	The maintainer's laptop is stolen. It has the only EA3 JDK, and EA3 is no longer available for download.	valhalla-jvm,test-matrix,maintainer,benchmarks	training
+S50	Physical world	A power cut during release leaves partly uploaded artifacts.	release,source-jar	training
+S51	Physical world	Servers become ARM-only. EA builds are available only for x86.	valhalla-jvm,test-matrix,app-author	training
+S52	Society and politics	Sanctions block downloads of OpenJDK EA builds in the maintainer's country.	valhalla-jvm,test-matrix,maintainer	test
+S53	Society and politics	The Clojure community boycotts libraries written by AI.	ai-agents,docs,lib-author,closed-record	training
+S54	Time	Each EA build lasts three months. Four builds come each year.	valhalla-jvm,value-transform,cap-probe,test-matrix,aot-output,docs	training
+S55	Time	After ten years, Java 8 is not available in CI images.	baseline-jvm,test-matrix,identity-backend	training
+S56	Time	The matrix test duration increases to four hours.	test-matrix,maintainer,quality-ci	training
+S57	Time	A shallow clone in CI gives version 0.1.1 and overwrites a published version.	source-jar,release	training
+S58	Absurd	The JVM makes all value objects == to each other.	valhalla-jvm,user-code,array-api	test
+S59	Absurd	Every field in every program is named __hash.	fields,core-macro,value-transform,closed-record	training
+S60	Absurd	The JVM verifier rejects every class that has a constructor.	valhalla-jvm,baseline-jvm,value-transform,identity-backend	training
+S61	Absurd	Java 8 gets value classes overnight through a back-port.	baseline-jvm,cap-probe,identity-backend,runtime-policy,test-matrix	training
+S62	Absurd	A tool translates all documentation into Latin and the English source is lost.	docs,ai-agents,lib-author	training
+S63	Absurd	Each thread of a program sees a different value of the fallback property.	runtime-policy,jvm-flags	training
+S64	Absurd	The class-file format becomes JSON.	classfile-api,value-transform,identity-backend,clojure-asm,clj-compiler	training
+S65	Society and politics	A government bans preview JVM features in public-sector software.	valhalla-jvm,jvm-flags,app-author,docs	training
+S66	Society and politics	The media blames value objects for a bank outage. Managers forbid value-type.	app-author,lib-author,docs	training
+S67	Physical world	A heat wave throttles the maintainer's machine. Benchmark noise exceeds 30%.	benchmarks,maintainer	training
+S68	Physical world	A cosmic ray flips a bit in a cached capability result.	cap-probe,field-cap-probe,capability-report,runtime-policy	training
+S69	Technology	nREPL evaluates forms on a thread with no Compiler/LOADER binding.	tooling,clj-compiler,loader,core-macro,expansion-transfer	training
+S70	Data	A build tool caches macroexpansions on disk and replays them in a later JVM.	expansion-transfer,loader,core-macro,aot-output	training
+S71	Customers and users	Operators call the capability report one million times per second.	capability-report,cap-probe,field-cap-probe,array-adapter	test
+S72	Time	Users cite a two-year-old benchmark as a performance guarantee.	benchmarks,docs,user-code	training
+S73	Absurd	Class.isValue disappears from every JVM on one day. Value classes still work.	cap-probe,core-macro,capability-report,valhalla-jvm	training

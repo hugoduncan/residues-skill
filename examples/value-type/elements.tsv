@@ -1,0 +1,35 @@
+# run: value-type-r1 | date: 2026-11-06 | skill: generate-stressors
+id	name	kind	description
+lib-author	library author	actor	Writes libraries with defvaluetype; must accept both representations.
+app-author	application author/operator	actor	Selects JVM, flags, fallback policy; deploys.
+maintainer	maintainer	actor	The one maintainer. Owns design, release, JVM tracking.
+ai-agents	AI agents	actor	Write and review code, tests, docs under munera/ramora rules.
+closed-record	closed-record	external	First user of defvaluetype* (record and closed record shapes).
+user-code	user code	actor	Programs that construct and use defined types and arrays; can depend on identity.
+tooling	editor tooling	external	CIDER/nREPL; can call macroexpand outside compilation.
+core-macro	value-type.core	component	defvaluetype, defvaluetype*, check-value-class: validate, select, expand.
+array-api	value-type.array	component	make-array, into-array, array-info.
+capability-report	value-type.capability	component	Public EDN report of four cached capability results.
+runtime-policy	impl.runtime	component	Fallback policy (read once), warning flag, fallback guards.
+cap-probe	impl.capability	component	Baseline-safe API checks, isolated value-class probe, cached result, value predicate.
+field-cap-probe	impl.field-capability	component	Native non-nil field probe and cached result.
+array-adapter	impl.array	component	Method handles to internal ValueClass; allocation/inspection capability.
+fields	impl.fields	component	Field specifications: :non-nil, tag resolution, exact Class identity.
+loader	impl.loader	component	Capture loader proxy of DynamicClassLoader; selects backend; AOT write; define and link.
+value-transform	value backend	component	impl.value-backend, transform, class-file, field-storage, field-access: value-class bytes via java.lang.classfile.
+identity-backend	impl.identity-backend	component	Identity output with typed storage and generated checks via clojure.asm.
+clj-compiler	Clojure compiler 1.12.6	external	deftype*, Compiler/LOADER, NewInstanceExpr, writeClassFile, DynamicClassLoader cache.
+clojure-asm	clojure.asm	external	ASM fork bundled in Clojure.
+valhalla-jvm	Valhalla EA JVM	infrastructure	JEP 401 EA build 27-jep401ea3+1-1: class format rules, preview, verifier.
+classfile-api	java.lang.classfile	external	JDK class-file API used for value output.
+jdk-internal-value	jdk.internal.value	external	Internal ValueClass array allocation and NullRestricted annotation.
+baseline-jvm	ordinary JVMs	infrastructure	Java 8+ without usable value classes; fallback target.
+jvm-flags	JVM startup flags	infrastructure	--enable-preview, --add-exports, -Dvalue-type.fallback.
+aot-output	consumer AOT output	artifact	Class files written at compile time; fixed representation.
+expansion-transfer	transferred expansions	flow	Macroexpansion output evaluated in another loader, process or time.
+source-jar	source-only JAR	artifact	build.clj; version 0.1.N from Git commit count.
+release	release workflow	process	release.yml, deps-deploy, Clojars; not yet published.
+test-matrix	test suites	artifact	Runtime, compatibility, cross-JVM, build tests in child JVMs; deftype compat corpus.
+quality-ci	quality CI	process	GitHub Actions: cljfmt, clj-kondo, Vale, quickdoc API check, tooling tests.
+docs	documentation	artifact	README, doc/usage, doc/API (generated), ramora designs, mementum.
+benchmarks	benchmarks	artifact	dev/bench: method call, object size, typed array.
