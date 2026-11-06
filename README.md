@@ -39,14 +39,40 @@ Requirements:
 - An agent harness that loads skills from `SKILL.md` files with YAML frontmatter.
 - Python 3, for the counting script of `find-hidden-coupling`. Without Python, the skill uses a manual method.
 
+### With the skills CLI
+
+Install all four skills with the [skills CLI](https://skills.sh):
+
+```sh
+npx skills add hugoduncan/residues-skill
+```
+
+Install one skill only:
+
+```sh
+npx skills add hugoduncan/residues-skill --skill generate-stressors
+```
+
+Add `-g` to install for all projects. List the skills without installing them:
+
+```sh
+npx skills add hugoduncan/residues-skill --list
+```
+
+### Manual
+
 Copy the skill directories into the skill directory of your harness:
 
 ```sh
-git clone <repository-url> residues-skill
+git clone https://github.com/hugoduncan/residues-skill.git
 cp -r residues-skill/skills/* <harness-skill-directory>/
 ```
 
 Examples of skill directories: `~/.claude/skills/` (Claude Code), `~/.psi/agent/skills/` or `.psi/skills/` (psi).
+
+### Frontmatter
+
+The skills follow the [Agent Skills specification](https://agentskills.io), with one addition: a `lambda` field, which psi uses. Other harnesses ignore it. Strict validators, for example `skills-ref validate`, report it as an unexpected field.
 
 ## Usage
 
