@@ -7,9 +7,10 @@ description: >
   list unexpected events for a system, or prepare input for an impact or coupling
   analysis. Triggers: "stressors", "stress the design", "what could hit this
   system", "unknown events", "residual analysis input".
+license: EPL-2.0
 lambda: "λdesign. scope ∧ unique(elements(design)) → generate(categories × techniques, ¬probability, include(absurd)) → stressors{id category event affects set} → split? → coverage → run_record"
 metadata:
-  tags: ["architecture", "design", "resilience", "stressors"]
+  tags: "architecture, design, resilience, stressors"
 ---
 
 # Generate Stressors
@@ -48,7 +49,7 @@ Do not change files that other skills wrote. If there is no file access, output 
 1. **Extract the elements.** List the elements of the design that a stressor can touch: actors, components, information flows, data stores, infrastructure, external dependencies, business context.
    - If the design is too large to read completely, agree a scope or a coarse level of detail with the user. Record it in `design.md`.
    - Give each element a unique ID. If two elements have the same name, add a qualifier, for example `service (billing)`. Do not merge elements only because their names are the same.
-2. **Generate.** Read [reference/prompts.md](reference/prompts.md). Combine each category with different techniques. Do not select only the combinations that seem likely. Move through the combinations in a fixed or random order.
+2. **Generate.** Read [references/prompts.md](references/prompts.md). Combine each category with different techniques. Do not select only the combinations that seem likely. Move through the combinations in a fixed or random order.
 3. **Write each stressor** with the rules in "Stressor quality".
 4. **Map.** For each stressor, list the IDs of the elements that it affects. If it affects no element, write `none`. Do not describe how the design responds.
 5. **Remove duplicates.** Merge two stressors only if they are the same event. Keep different events that affect the same elements. That overlap is useful.

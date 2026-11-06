@@ -8,9 +8,10 @@ description: >
   parts of a design are coupled, vulnerable, or should share or split a boundary.
   Triggers: "hidden coupling", "incidence matrix", "which components are coupled",
   "vulnerable components", "dangerous stressors", "where to put boundaries".
+license: EPL-2.0
 lambda: "λ(stressors, design). normalise(unique(elements)) → script(matrix(stressor × element)) → mapping_check → {vulnerable dangerous similar(pairs) ∖ connected(design)} → groups → boundary_candidates"
 metadata:
-  tags: ["architecture", "design", "coupling", "resilience", "stressors"]
+  tags: "architecture, design, coupling, resilience, stressors"
 ---
 
 # Find Hidden Coupling

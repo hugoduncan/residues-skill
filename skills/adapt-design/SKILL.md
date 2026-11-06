@@ -8,9 +8,10 @@ description: >
   harden an architecture, or to act on stressor or coupling analysis results.
   Triggers: "adapt the design", "survive these stressors", "make it resilient",
   "harden the architecture", "what should change".
+license: EPL-2.0
 lambda: "λ(design, stressors). split? ∧ write_once(naive) ∧ confirm(criteria) → ∀s ∈ training: apply(s) → remaining → survives? ∨ smallest_change → record(s) → consolidate → recheck → adapted ∧ open_decisions"
 metadata:
-  tags: ["architecture", "design", "resilience", "stressors"]
+  tags: "architecture, design, resilience, stressors"
 ---
 
 # Adapt Design

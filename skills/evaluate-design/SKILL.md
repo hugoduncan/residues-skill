@@ -7,9 +7,10 @@ description: >
   change made a system more resilient, to compare two architectures under stress,
   or to verify adapt-design results. Triggers: "evaluate the design", "compare
   architectures", "residual index", "Ri", "did it get better", "test set".
+license: EPL-2.0
 lambda: "λ(naive, adapted, test_stressors). check(inputs ∧ disjoint(split) ∧ provenance) ∧ use(criteria) → ∀s: survives?(naive, s) ∧ survives?(adapted, s) → N, R, S → check(counts) → Ri = (R − N) / S ∧ regressions"
 metadata:
-  tags: ["architecture", "design", "resilience", "evaluation", "stressors"]
+  tags: "architecture, design, resilience, evaluation, stressors"
 ---
 
 # Evaluate Design
