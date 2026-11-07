@@ -29,7 +29,9 @@ Each skill works alone. The skills share data through a run record: a directory 
 Experimental. The skills are tested on two designs:
 
 - Their own design: [examples/self-analysis](examples/self-analysis/). Ri = 0.27.
-- A real library, [value-type](https://github.com/hugoduncan/value-type): [examples/value-type](examples/value-type/). Ri = 0.00, no regressions. The original design survives 16 of 18 test stressors, so Ri can be at most 0.11.
+- A real library, [value-type](https://github.com/hugoduncan/value-type), in two runs:
+  - [examples/value-type](examples/value-type/): 73 stressors. Ri = 0.00, no regressions. The original design survives 16 of 18 test stressors, so Ri can be at most 0.11.
+  - [examples/value-type-r2](examples/value-type-r2/): 124 stressors, with the skills after the r1 feedback. Ri = 0.00, no regressions, maximum 0.10. More stressors did not raise the maximum.
 
 File formats and skill text can change without backward compatibility.
 

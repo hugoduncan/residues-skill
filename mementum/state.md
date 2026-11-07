@@ -36,13 +36,25 @@ Run record: one directory, fixed files (design.md, elements.tsv, stressors.tsv w
 
 - examples/self-analysis: pipeline on its own design. Ri = 0.27 (15 test stressors). Changes C01–C09 applied.
 - examples/value-type: run value-type-r1 on ~/projects/hugoduncan/value-type (commit 5073893f). 73 stressors (55/18), 8 changes, Ri = 0.00, ceiling 0.11, no regressions. Feedback applied to skills and README ("Limits").
+  - Pass 3 (after evaluation): S38, S58 used for training → C09–C11 (value-class switch, semantic self-check, forced-JIT row). S58 survives, S38 partial. Not evaluated. stressors.tsv not changed.
   - Inputs come from examples/value-type/build_inputs.py. Edit the script, not the TSV files.
   - evaluate-design ran in a fresh session through .psi/workflows/evaluate-design.md (delegate). After adding a workflow file, reload with /delegate-reload.
+- examples/value-type-r2: same design, 124 new stressors (112 + 12 from coverage, then split 93/31), updated skills. Coupling: 0 hidden at defaults, 1 at 0.3 (cap-probe–loader, shared DynamicClassLoader). 11 changes. Ri = 0.00, max 0.10, no regressions. Inputs from build_inputs.py (reads r1 elements/connections).
+
+## Skill feedback from r2 (not yet applied)
+
+- More stressors do not raise the Ri maximum: naive survival ≈ 90% in r1 and r2. S − N ≥ 5 needs ~50 test stressors (~200 total). The memory ri-ceiling already says this.
+- Coverage vs split: coverage added 2 stressors for expansion-transfer; the random split put both in test → 0 training. Candidate: check training coverage after the split, or stratify.
+- Adapter stricter than evaluator: criteria count "clear failure that names the fix" as survival; adaptation missed it for S039/S097 (naive already says "Fix: use Clojure 1.12"). Candidate: adapt-design checks the criteria exceptions before a "no".
+- Binary survival hides graded gains (evaluator: earlier fallback, smaller fix boundary in 5 test stressors).
+- No mechanism to record test stressors used in a later pass (r1 pass 3).
+- r1 adaptation S34 code fact was wrong: the field probe throws when NullRestricted is ignored.
 
 ## Next
 
 - Self-analysis second pass with S18, S35, S41, S44, S52 (repeatability, duplicate IDs, prompt injection, malicious fork, skill versions).
-- value-type: second pass with S38, S58 as training stressors (silent JVM defects), or repeated splits.
+- Decide on the r2 skill feedback above.
+- value-type-r2: optional pass with S073, S099 (both designs fail).
 
 ## Related
 
