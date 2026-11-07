@@ -30,7 +30,7 @@ Run record: one directory, fixed files (design.md, elements.tsv, stressors.tsv w
 - Tie (neither survives, equal) counts for neither design. Source does not define ties.
 - Coupling defaults 0.5 / 3. If no hidden pairs: sensitivity runs at similarity 0.35 and 0.3, reported separately.
 - evaluate-design reports Ri limits. S − N < 5 → Ri cannot show an effect (heuristic). See mementum/memories/ri-ceiling.md.
-- Each SKILL.md stays < 1000 words (ramora).
+- Each SKILL.md stays ≤ 1000 words (ramora). Trim, do not split.
 
 ## Examples
 
@@ -41,19 +41,16 @@ Run record: one directory, fixed files (design.md, elements.tsv, stressors.tsv w
   - evaluate-design ran in a fresh session through .psi/workflows/evaluate-design.md (delegate). After adding a workflow file, reload with /delegate-reload.
 - examples/value-type-r2: same design, 124 new stressors (112 + 12 from coverage, then split 93/31), updated skills. Coupling: 0 hidden at defaults, 1 at 0.3 (cap-probe–loader, shared DynamicClassLoader). 11 changes. Ri = 0.00, max 0.10, no regressions. Inputs from build_inputs.py (reads r1 elements/connections).
 
-## Skill feedback from r2 (not yet applied)
+## Skill feedback from r2 (applied)
 
-- More stressors do not raise the Ri maximum: naive survival ≈ 90% in r1 and r2. S − N ≥ 5 needs ~50 test stressors (~200 total). The memory ri-ceiling already says this.
-- Coverage vs split: coverage added 2 stressors for expansion-transfer; the random split put both in test → 0 training. Candidate: check training coverage after the split, or stratify.
-- Adapter stricter than evaluator: criteria count "clear failure that names the fix" as survival; adaptation missed it for S039/S097 (naive already says "Fix: use Clojure 1.12"). Candidate: adapt-design checks the criteria exceptions before a "no".
-- Binary survival hides graded gains (evaluator: earlier fallback, smaller fix boundary in 5 test stressors).
-- No mechanism to record test stressors used in a later pass (r1 pass 3).
-- r1 adaptation S34 code fact was wrong: the field probe throws when NullRestricted is ignored.
+- generate-stressors: after the split, each element with stressors needs a training stressor, else split again with the next seed. Recommend ~200 stressors for a well-analysed design.
+- adapt-design: apply the criteria exceptions (e.g. clear failure that names the fix) before "no"; name the lost function. Test stressors used in a later pass get a `# retired: <ids> | date:` line in stressors.tsv; `set` unchanged.
+- evaluate-design: drop retired stressors from the test set; note graded gains, do not count them.
+- Not changed: r1 and r2 run records (r1 pass 3 predates the retired line). r1 S34 code fact was wrong (field probe throws when NullRestricted is ignored).
 
 ## Next
 
 - Self-analysis second pass with S18, S35, S41, S44, S52 (repeatability, duplicate IDs, prompt injection, malicious fork, skill versions).
-- Decide on the r2 skill feedback above.
 - value-type-r2: optional pass with S073, S099 (both designs fail).
 
 ## Related
