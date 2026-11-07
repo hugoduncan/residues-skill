@@ -52,7 +52,7 @@ Run record: one directory, fixed files (design.md, elements.tsv, stressors.tsv w
 
 - Self-analysis second pass with S18, S35, S41, S44, S52 (repeatability, duplicate IDs, prompt injection, malicious fork, skill versions).
 - value-type-r2: optional pass with S073, S099 (both designs fail).
-- value-type recommendations: examples/value-type/recommendations.md. Decided: probes on java.lang.classfile (identity backend keeps clojure.asm), fail-open format table, policy read at first fallback decision + policy in capability report, signing dropped, silent stays silent. Rest recommended, not decided. Next: munera tasks in the value-type repo, if the user asks.
+- value-type recommendations: examples/value-type/recommendations.md. Decided yes: 1 probes on java.lang.classfile (identity backend keeps clojure.asm), 2 fail-open format table, 3 policy at first fallback decision + in report, 4 JVM facts file, 5 compiler boundary (keep clear error), 6 install tested releases, 7 receiving expansion, 8 value-class switch, 9 forced-JIT row, 10 snapshots, 11 tiered matrix. No: signing, JDK archive (follow EA), two channels. Open: semantic self-check (cost table in file). Next: munera tasks in value-type, if asked.
 
 ## Related
 
