@@ -22,7 +22,7 @@ Measure if a changed design survives unknown events better than the original des
 - **Stressor:** an event that the design is not made for.
 - **Naive design:** the original design. It is the control.
 - **Adapted design:** the changed design.
-- **Test stressors:** stressors that nobody used to change the design. For the design, they are unknown events.
+- **Test stressors:** stressors not used to change the design: unknown events for it.
 - **Criteria:** the essential functions, and the meaning of "acceptable effort".
 - **Survive:** after the stressor, the design keeps the essential functions, or returns to them with acceptable effort.
 
@@ -46,15 +46,15 @@ If the user gives a run record directory, read and write files there. Start each
 
 1. **Check the inputs.** If the naive design or the adapted design is missing, stop and ask. Do not derive the naive design from the adapted design. Do not use one design for both.
 2. **Check the test set.**
-   - Each stressor is in exactly one set. If a stressor is in both sets, or the test set is empty, stop and report.
+   - Each stressor is in exactly one set. Exclude and report `# retired:` stressors. If a stressor is in both sets, or the test set is empty, stop and report.
    - Find the provenance. Compare the date of the split (first line of `stressors.tsv`) with the start of the adaptation (`naive.md`, `adaptation.md`). Report: split recorded before adaptation: yes, no or unknown.
-   - If there are no test stressors, generate them with skill `generate-stressors`. Use only the naive design as input. Do not look at the adapted design or at the changes. Report the provenance: generated at evaluation.
+   - If there are no test stressors, generate them with skill `generate-stressors`. Use only the naive design as input, not the adapted design or the changes. Report the provenance: generated at evaluation.
 3. **Use the criteria.** Use `criteria.md` unchanged. If it is missing, get the criteria from the user, write `criteria.md`, and report that the criteria of the adaptation are unknown. Do not change the criteria during the evaluation.
 4. **Evaluate each test stressor.**
    1. Apply it to the naive design. Follow the flows. Decide: survives or not. Write one reason.
    2. Apply it to the adapted design in the same way. Decide and write one reason.
-   3. If neither design survives, decide which design survives better: less loss of essential function, or a faster return. Mark that design as the better one. If they are equal, mark neither.
-   Use the same strictness for both designs. Give no credit for a change that the adapted design does not contain.
+   3. If neither survives, mark the better one: less loss of essential function, or a faster return. If equal, mark neither.
+   Use the same strictness for both designs. Give no credit for changes that the adapted design lacks. Note, but do not count, gains that the decision hides, for example an earlier fallback.
 5. **Count.**
    - S = number of test stressors
    - N = number that the naive design survives, plus the number where neither survives and the naive design is better
