@@ -22,6 +22,10 @@ Run `value-type-r1`, 2026-11-06. Design: [value-type](https://github.com/hugodun
 - Both test failures (S38, S58) are silent JVM defects. No training stressor of that kind made the adaptation add a self-check.
 - The changes target compiler drift, JVM-format drift and release security. No test stressor tests these directly.
 
+## Recommendations
+
+The merged recommendations of r1 and r2, with the decisions of the user: [recommendations.md](recommendations.md).
+
 ## Pass 3: S38 and S58
 
 After the evaluation, S38 and S58 went into a new adaptation pass (evaluate-design next steps). They are no longer test stressors.

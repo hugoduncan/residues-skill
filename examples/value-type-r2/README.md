@@ -26,6 +26,10 @@ Run `value-type-r2`, 2026-11-06. Same design as [r1](../value-type/) ([value-typ
 - **Failures are in the same places as in r1.** The naive design fails on compiler and JVM-format change, on release security, and on silent JVM defects. Both evaluations give 0.00.
 - **A code fact in r1 was wrong.** r1 adaptation S34 assumed that the field probe reports "unavailable" when `NullRestricted` disappears. The probe throws ("accepted null") instead.
 
+## Recommendations
+
+Merged with r1, with the decisions of the user: [../value-type/recommendations.md](../value-type/recommendations.md).
+
 ## Next steps
 
 - Both designs fail S073 (shadowed `value-type.impl` namespace), S099 (all value objects `==` nil) and S108 (absurd). Use S073 and S099 in a new adaptation pass.
