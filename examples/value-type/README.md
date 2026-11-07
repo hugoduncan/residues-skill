@@ -21,4 +21,12 @@ Run `value-type-r1`, 2026-11-06. Design: [value-type](https://github.com/hugodun
 - The naive design survives 16 of 18 test stressors, so Ri could be at most 2/18 = 0.11. A design with good existing risk analysis leaves little room for Ri to measure. One split of 18 stressors is too coarse to show an effect.
 - Both test failures (S38, S58) are silent JVM defects. No training stressor of that kind made the adaptation add a self-check.
 - The changes target compiler drift, JVM-format drift and release security. No test stressor tests these directly.
-- Possible next steps: repeat with different splits (evaluate-design step 9; each split needs its own adaptation), or run a second pass with S38 and S58 as training stressors.
+
+## Pass 3: S38 and S58
+
+After the evaluation, S38 and S58 went into a new adaptation pass (evaluate-design next steps). They are no longer test stressors.
+
+- C09 value-class switch (`value-type.value-classes=off`), C10 semantic self-check (`==` on probe objects, array round trip, value AOT check at load), C11 forced-JIT test row.
+- S58 now survives: the self-check finds it and definitions fall back by policy.
+- S38 is partial: a JIT-only defect is found only if a test exercises it. After detection, C09 gives a return by configuration.
+- No evaluation of the pass-3 design: r1 has no unused test stressor that tests these changes. Run [r2](../value-type-r2/) evaluates a new adaptation with new stressors.

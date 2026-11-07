@@ -2,7 +2,8 @@
 
 # Adaptation: value-type
 
-Inputs: `naive.md`, `criteria.md` (confirmed 2026-11-06), `coupling.md`, 55 training stressors. Test stressors were not read.
+Inputs: `naive.md`, `criteria.md` (confirmed 2026-11-06), `coupling.md`, 55 training stressors. Test stressors were not read in passes 1 and 2.
+Pass 3 (2026-11-06, after `evaluation.md`): S38 and S58, the two test stressors that both designs fail (evaluate-design next steps). They are now used. They are not test stressors after this pass. `stressors.tsv` is not changed (the split stays as recorded). `evaluation.md` is the evaluation of the pass-2 design.
 Code facts checked at commit `5073893f`: `impl/capability.clj` (probe uses `clojure.asm`; constants `0x800`, `0xffff0000|major`), `impl/transform.clj` (own `ACC_STRICT_INIT`, `ClassFile/PREVIEW_MINOR_VERSION`), `impl/runtime.clj` (policy read once at load; invalid value throws), `core/check-value-class`, `.github/workflows/release.yml` (Clojars credentials in GitHub secrets; `fetch-depth: 0`), release shallow-clone check, tests on `clojure.test`, 405 mentions of EA3 in 204 maintained files.
 
 Order: coupling groups first (compiler group, then JVM-format group, then release group), then the other stressors in ID order.
@@ -85,6 +86,15 @@ Order: coupling groups first (compiler group, then JVM-format group, then releas
 | S70 | Replayed ordinary value expansion: no loader is installed in the new JVM, so `check-value-class` throws `:not-value-class`. The literal `installed=true` misleads. Non-nil expansions use receiving macros and work. | fallback and non-nil | naive: no → yes | C08 |
 | S72 | Old benchmark cited as a guarantee: the README and the design disclaim this. | all | yes | — |
 
+### Pass 3: stressors from the evaluation
+
+Code facts at `5073893f`: the probe checks only `isValue` and one field read (`impl/capability.clj`). It does not check `==` or arrays. `impl.array` derives allocation capability from the value-class result. Value AOT output has no load-time guard. No property can switch off value classes on a capable JVM.
+
+| ID | Effect on design | Remaining part | Survives | Change |
+|---|---|---|---|---|
+| S58 | All value objects are `==`. The probe passes. Every value definition gives a class with wrong `identical?` and default equality. Nothing detects it, and the user cannot switch to identity classes without a different JVM or no preview (F1, F6 lost silently). With C10 the probe sees two different probe objects as `==`, reports `:failed-self-check`, and definitions fall back by policy (correct identity semantics). Value AOT output fails at load with the same reason. | all (identity) | naive: no → yes | C09, C10 |
+| S38 | A JIT defect gives wrong values from flattened arrays. The defect appears only in compiled code, so a load-time self-check (C10) does not see it. With C11 the defect is found before the build is claimed, if a test exercises it. After detection, C09 switches off value classes and arrays by one property (configuration only). A defect that no test exercises stays silent until a user reports it. | all after detection | partial | C09, C10 (partial), C11 |
+
 ## 2. Changes
 
 | ID | Description | Type | Elements | Stressors |
@@ -97,6 +107,9 @@ Order: coupling groups first (compiler group, then JVM-format group, then releas
 | C06 | **Release signature outside GitHub.** Sign release artifacts with a key that is not stored in GitHub. CI holds no publish credential, or the publish step needs the offline signature. Document how to verify. | change a process | release, quality-ci, maintainer, source-jar | S48 |
 | C07 | **Archive tested JDKs.** Keep a private, checksummed copy of each JDK build in the C05 table. | change a process | valhalla-jvm, baseline-jvm, test-matrix, maintainer | S49, S55 (also helps S05) |
 | C08 | **Receiving expansion for all definitions.** Ordinary value definitions expand to a receiving macro, as non-nil fields already do, so the capture loader installs where the form is analysed. Removes the `installed` literal and the second expansion style. | make behaviour predictable; fewer branches | core-macro, loader, expansion-transfer, tooling | S70 (also the tooling `macroexpand` risk in `risks-and-evolution.md`) |
+| C09 | **Value-class switch.** A JVM property `value-type.value-classes` (`auto`, `off`), read once at load like the fallback policy. An invalid value throws at load. `off` gives value-class capability unavailable with reason `:disabled`. Native fields and array allocation derive from it, so they are also unavailable. Definitions fall back by policy. Arrays fail clearly. | make behaviour predictable | runtime-policy, cap-probe, array-adapter, jvm-flags, capability-report, docs | S38, S58 |
+| C10 | **Semantic self-check.** The probe checks value semantics, not only `isValue`: two probe objects with equal fields are `==`, two with different fields are not. The array capability allocates a small null-restricted array, writes it, and reads it back. A failure gives reason `:failed-self-check`, then fallback by policy (values) or a clear failure (arrays). Value AOT output checks the cached result at namespace initialization and throws with the reason. | add a function | cap-probe, array-adapter, aot-output, core-macro, capability-report | S58, S38 (partial) |
+| C11 | **Compiled-code test row.** The primary pair of C04 adds one row that runs the value and array suites with forced JIT compilation. A new EA build enters `jvm-facts` (C05) only after this row passes. | change infrastructure | test-matrix, jvm-facts, valhalla-jvm, maintainer | S38 |
 
 ## 3. Consolidation (step 6)
 
@@ -105,6 +118,7 @@ Order: coupling groups first (compiler group, then JVM-format group, then releas
 - **C04, C05 and C07 share one data source.** The C05 table selects the C04 rows and names the C07 archives.
 - **C08 removes a branch.** One expansion style for all definitions.
 - No two-way dependencies were found or added. No links removed: every link is used by a function.
+- Pass 3: C10 goes inside the JVM-format boundary (probe) and the Arrays boundary. C09 goes inside the Policy boundary: the policy decides what happens when capability is absent, and C09 makes it absent. C11 is one more row in the C04 tiers, selected from the C05 table. C10's AOT check uses the C08 receiving expansion, so it adds no expansion style.
 
 ## 4. Check again (step 7)
 
@@ -115,6 +129,15 @@ Pass 2: all 55 training stressors applied to the consolidated design (`adapted.m
   - C08: the AOT fallback guard does not change.
   - C03: the probe and the transform agree by construction.
 - No stressor needed a new change. The procedure stops after pass 2.
+
+Pass 3 check: all 57 stressors (55 training, S38, S58) applied to the design with C09–C11.
+
+- No new failures. Checked:
+  - S41, S63: the C09 property is read once and rejects invalid values at load, as the policy does.
+  - S35, S45: AOT identity output does not run the probe, so C10 does not change it. Value AOT output now runs the probe at initialization (open decision 10).
+  - S68: a bit flip in the cached result does not change (one more key).
+  - S65: preview banned gives fallback before the self-check runs.
+- S38 stays partial. A smaller change that detects JIT-only defects at run time was not found: a check of each array read is too expensive and cannot be complete.
 
 ## 5. Open decisions (trade-offs for the user)
 
@@ -127,12 +150,15 @@ Pass 2: all 55 training stressors applied to the consolidated design (`adapted.m
 7. **C06 adds key management** for one maintainer, and can end automated publication.
 8. **C07 redistribution.** EA licences can forbid redistribution. Keep the archive private.
 9. **C08 changes the expansion shape** of ordinary definitions. No backward compatibility is needed, but the transfer and AOT tests (a large part of `test-matrix`) change.
+10. **C10 startup cost and AOT.** The self-check adds work to the first probe. Value AOT output now runs the probe at namespace initialization, so AOT applications pay the probe cost at startup.
+11. **C09 under policy `error`.** `off` with policy `error` throws on each definition. Options: (a) accept and document "use `off` with `silent` or `warn`"; (b) `:disabled` is exempt from the policy.
+12. **C11 matrix time.** Forced JIT compilation is slow. It adds time to the primary pair that C04 tries to keep short.
 
 ## 6. Failure modes of shared elements (step 9)
 
 | Element | Used by | Technical failure modes |
 |---|---|---|
-| cap-probe | C01, C03, F1, F6 | Probe defect → all value output lost; under `silent` with no message. Probe class leak in the static class cache (UUID names). A wrong reason classification hides defects (open decision 1). Delay poisoned by an exception thrown during first use. |
+| cap-probe | C01, C03, C09, C10, F1, F6 | A self-check that is too strict gives fallback on a good JVM (under `silent`, with no message). Probe defect → all value output lost; under `silent` with no message. Probe class leak in the static class cache (UUID names). A wrong reason classification hides defects (open decision 1). Delay poisoned by an exception thrown during first use. |
 | format table (C03) | probe, transform | Wrong or stale row → the probe passes and the transform output is rejected (D9 wraps), or the probe fails on a good JVM. Two builds with one feature release need a build key, not only a major version. |
 | loader / compiler boundary (C01) | all transformed paths | Proxy dispatch error. Binding left in a tooling frame. The shape model is out of date for a patch release. |
 | test-matrix | C04, C05, F7 | Child-JVM isolation errors. Flaky cells. Two unresolved review items: label-order agreement and the loader-isolation negative check (`mementum/state.md`). Smoke rows miss defects that only the cross product finds. |
@@ -145,3 +171,4 @@ Pass 2: all 55 training stressors applied to the consolidated design (`adapted.m
 | S28 | Capture ineffective: non-nil definitions need capture on both backends. A fix needs a new D3 design. |
 | S60 | Absurd: no JVM class with a constructor can load. |
 | S64 | Absurd: Clojure itself stops. Non-nil backends need a rewrite. |
+| S38 | Partial: a JIT-only defect that no test exercises stays silent until reported. After detection, C09 gives a return by configuration. |
