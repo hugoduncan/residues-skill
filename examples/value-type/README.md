@@ -21,4 +21,4 @@ Run `value-type-r1`, 2026-11-06. Design: [value-type](https://github.com/hugodun
 - The naive design survives 16 of 18 test stressors, so Ri could be at most 2/18 = 0.11. A design with good existing risk analysis leaves little room for Ri to measure. One split of 18 stressors is too coarse to show an effect.
 - Both test failures (S38, S58) are silent JVM defects. No training stressor of that kind made the adaptation add a self-check.
 - The changes target compiler drift, JVM-format drift and release security. No test stressor tests these directly.
-- Possible next steps: repeat with different splits (evaluate-design step 9), or run a second pass with S38 and S58 as training stressors.
+- Possible next steps: repeat with different splits (evaluate-design step 9; each split needs its own adaptation), or run a second pass with S38 and S58 as training stressors.

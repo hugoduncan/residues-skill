@@ -68,6 +68,8 @@ Ri = (R − N) / S = (16 − 16) / 18 = **0.00**.
 
 No difference. On these 18 test stressors the changes C01–C08 give no measured gain. Most test stressors are adoption, process or JVM-defect events. C01–C08 target compiler drift, JVM-format drift and release security, and no test stressor tests these directly. The test set is small, so the result is coarse.
 
+Limits (added after the evaluation, when evaluate-design added this step): maximum (S − N) / S = 2/18 = 0.11, minimum −N / S = −16/18 = −0.89. S − N = 2 < 5: Ri cannot show an effect on this test set.
+
 ## 6. Regressions
 
 None.
